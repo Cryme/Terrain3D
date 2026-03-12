@@ -5,6 +5,7 @@
 
 #include <godot_cpp/classes/array_mesh.hpp>
 #include <godot_cpp/classes/material.hpp>
+#include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
@@ -53,6 +54,7 @@ private:
 	// Saved data
 	bool _enabled = true;
 	Ref<PackedScene> _packed_scene;
+	Ref<Mesh> _mesh;
 	GenType _generated_type = TYPE_NONE;
 	int _generated_faces = 2;
 	Vector2 _generated_size = V2(1.f);
@@ -106,6 +108,8 @@ public:
 
 	void set_scene_file(const Ref<PackedScene> &p_scene_file);
 	Ref<PackedScene> get_scene_file() const { return _packed_scene; }
+	void set_mesh_resource(const Ref<Mesh> &p_mesh);
+	Ref<Mesh> get_mesh_resource() const { return _mesh; }
 	bool is_scene_file_pending() const { return _pending_meshes.size() > 0; }
 	void commit_meshes();
 	void set_generated_type(const GenType p_type);
