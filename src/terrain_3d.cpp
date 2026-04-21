@@ -1,4 +1,4 @@
-// Copyright © 2025 Cory Petkovsek, Roope Palmroos, and Contributors.
+// Copyright © 2023-2026 Cory Petkovsek, Roope Palmroos, and Contributors.
 
 #include <godot_cpp/classes/compositor.hpp>
 #include <godot_cpp/classes/directional_light3d.hpp>
@@ -608,6 +608,8 @@ void Terrain3D::update_region_labels() {
 			label->set_draw_flag(Label3D::FLAG_DOUBLE_SIDED, true);
 			label->set_draw_flag(Label3D::FLAG_DISABLE_DEPTH_TEST, true);
 			label->set_draw_flag(Label3D::FLAG_FIXED_SIZE, true);
+			label->set_render_priority(127);
+			label->set_outline_render_priority(126);
 			label->set_text(text);
 			label->set_modulate(Color(1.f, 1.f, 1.f, .5f));
 			label->set_outline_modulate(Color(0.f, 0.f, 0.f, .5f));
@@ -619,7 +621,7 @@ void Terrain3D::update_region_labels() {
 			_label_parent->add_child(label, true);
 			Vector3 pos = Vector3(real_t(region_loc.x) + .5f, 0.f, real_t(region_loc.y) + .5f) * _region_size * _vertex_spacing;
 			real_t height = _data->get_height(pos);
-			pos.y = (std::isnan(height)) ? 0 : height;
+			pos.y = (std::isnan(height)) ? 0.f : height;
 			label->set_position(pos);
 		}
 	}
@@ -646,11 +648,14 @@ void Terrain3D::set_clipmap_target(Node3D *p_node) {
 }
 
 Vector3 Terrain3D::get_clipmap_target_position() const {
+	// In Editor, or no clipmap target, use camera
+	if (IS_EDITOR || !_clipmap_target.get_target()) {
+		if (Node3D *cam = _camera.get_target()) {
+			return cam->get_global_position();
+		}
+	}
 	if (Node3D *target = _clipmap_target.get_target()) {
 		return target->get_global_position();
-	}
-	if (Node3D *cam = _camera.get_target()) {
-		return cam->get_global_position();
 	}
 	return V3_ZERO;
 }
@@ -666,10 +671,22 @@ void Terrain3D::set_collision_target(Node3D *p_node) {
 }
 
 Vector3 Terrain3D::get_collision_target_position() const {
+	// In Editor, always prefer camera
+	if (IS_EDITOR) {
+		if (Node3D *cam = _camera.get_target()) {
+			return cam->get_global_position();
+		}
+	}
 	if (Node3D *target = _collision_target.get_target()) {
 		return target->get_global_position();
 	}
-	return get_clipmap_target_position();
+	if (Node3D *target = _clipmap_target.get_target()) {
+		return target->get_global_position();
+	}
+	if (Node3D *cam = _camera.get_target()) {
+		return cam->get_global_position();
+	}
+	return V3_ZERO;
 }
 
 void Terrain3D::set_ocean_light_target(Node3D *p_node) {

@@ -1,4 +1,4 @@
-// Copyright © 2025 Cory Petkovsek, Roope Palmroos, and Contributors.
+// Copyright © 2023-2026 Cory Petkovsek, Roope Palmroos, and Contributors.
 
 #ifndef TERRAIN3D_COLLISION_CLASS_H
 #define TERRAIN3D_COLLISION_CLASS_H
@@ -64,7 +64,7 @@ public:
 
 	void build();
 	void reset_target_position() { _last_snapped_pos = V2I_MAX; }
-	void update(const bool p_rebuild = false);
+	void update(const Vector2i &p_region_loc = V2I_MAX, const bool p_rebuild = false);
 	void destroy();
 
 	void set_mode(const CollisionMode p_mode);

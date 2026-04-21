@@ -1,7 +1,9 @@
-// Copyright © 2025 Cory Petkovsek, Roope Palmroos, and Contributors.
+// Copyright © 2023-2026 Cory Petkovsek, Roope Palmroos, and Contributors.
 
 #ifndef CONSTANTS_CLASS_H
 #define CONSTANTS_CLASS_H
+
+#include <functional>
 
 // GDExtension uses the godot namespace, custom modules do not.
 #if defined(GDEXTENSION) && !defined(GODOT_MODULE)
